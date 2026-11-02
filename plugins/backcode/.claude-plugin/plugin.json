@@ -1,0 +1,25 @@
+{
+  "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
+  "name": "backcode",
+  "version": "1.1.10",
+  "description": "Backcode from Claude Code: set up and troubleshoot the runner, and work the Backcode way outside Backcode (one worktree and PR per feature or fix, registered on the board).",
+  "author": {
+    "name": "Brothapps S.L.",
+    "url": "https://github.com/hernanmateo"
+  },
+  "homepage": "https://github.com/hernanmateo/backcode-runner#readme",
+  "repository": "https://github.com/hernanmateo/backcode-runner",
+  "license": "Apache-2.0",
+  "keywords": [
+    "backcode",
+    "runner",
+    "setup",
+    "worktree",
+    "pull-requests"
+  ],
+  "skills": [
+    "./skills/setup",
+    "./skills/doctor",
+    "./skills/feature"
+  ]
+}
