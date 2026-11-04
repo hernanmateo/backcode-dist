@@ -16,8 +16,17 @@ ask for the configuration in the chat, no `sudo`, and ask before changing anythi
    what's missing on this computer and which projects are connected.
 2. Service log (when it runs at login): `tail -n 80 ~/.backcode/logs/service.log`.
    macOS: `launchctl print gui/$(id -u)/com.backcode.runner | head -20`. Linux: `systemctl --user status backcode-runner`.
+   **Installed but the panel doesn't answer** (port 47474; e.g. it stopped after an auto-update, or macOS 27 left the
+   launch on hold): offer to relaunch it with `backcode service restart` (same as
+   `launchctl kickstart -k gui/$(id -u)/com.backcode.runner`), which kills whatever process is there and starts it again.
+   Ask first: a task in progress goes back to the queue.
 3. Running by hand? `ps -Ao pid,command | grep -E "backcode|dist/(cli|index|all)\.js" | grep -v grep`.
 4. **CI** (only when you're in a project's repo): does its main branch have CI? See [CI](#ci) below.
+5. **Old marketplace in the repo** (only when you're in a project's repo): if `.claude/settings.json` on the main branch
+   (`git show <remote>/<base>:.claude/settings.json`) has `extraKnownMarketplaces.backcode.source.repo` =
+   `hernanmateo/backcode-runner`, the plugin now lives in `hernanmateo/backcode-dist` and that repo no longer gets updates.
+   Offer to change it **in a PR, the Backcode way**, like the last part of step **6.4** of `/backcode:setup`
+   (`backcode task start …`, change only that value, `backcode task pr …`); never edit or commit it on the main branch.
 
 ## CI
 
@@ -50,10 +59,13 @@ own PR, never on the main branch).
 | PRs not opening (Bitbucket) | Token expired or missing a scope | `! backcode connect` and paste the configuration again: it checks and asks for a new token |
 | "isn't a git repository" / repo moved | The configured folder changed | `pbpaste \| backcode connect --repo <new path> --no-start` with a fresh configuration |
 | Claude Code errors / "not signed in" | Claude Code signed out | Ask the user to run `! claude` and sign in, or use an API key in the panel |
+| The app spins forever until you run `backcode` in Terminal; `launchctl print gui/$(id -u)/com.backcode.runner` says «Could not find service» | The plist is in `~/Library/LaunchAgents` but launchd hasn't loaded it (after **Shut down** from the panel/app, which does `bootout`, or macOS didn't load it at login). Older runners only `kickstart` it, which does nothing | `backcode service restart` (now loads it with `launchctl bootstrap` + `kickstart`), or `backcode service install`. If it still won't load, check Login Items › Allow in the Background |
 | Panel doesn't open | Nothing listening on 127.0.0.1:47474, or another program on that port | `backcode` starts it; `BACKCODE_PANEL_PORT=47475 backcode` for another port |
 | Stuck on an old version | Updates fail (no network, a git copy with local changes) | The log says why; reinstall with the Mac app or `install.sh` |
 | Guidelines or `/backcode:feature` not working, or `backcode status` says the plugin has a new version | The Claude Code plugin is missing or old: Claude Code doesn't update this marketplace by itself | `! claude plugin marketplace update backcode` and `! claude plugin update backcode@backcode` (or **Update the plugin** in the panel), then restart Claude Code. To keep it current: /plugin › Marketplaces › backcode › enable auto-update |
+| `backcode status` says the «backcode» marketplace reads from `hernanmateo/backcode-runner` (or another repo) | It was added before the plugin moved to `hernanmateo/backcode-dist`: updates (and `marketplace add`) fail | The runner switches it by itself within half an hour, or **Update the plugin** in the panel. By hand: `! claude plugin marketplace remove backcode`, `! claude plugin marketplace add hernanmateo/backcode-dist`, `! claude plugin install backcode@backcode --scope user`, then restart Claude Code. A local folder marketplace (for development) is left alone |
 | Guidelines not showing in a repo | An admin set the project to **Free** (off) in the app (the default is **Remind**), or this computer's runner isn't connected to that project | An admin sets **Remind** in the app (Edit project); connect the runner to the project. Then a new Claude Code session |
+| Profile › this computer › **Services** in the app is empty, says «Couldn't check» for a tool, or says the runner is still checking its tools | One of the runner's read-only tool checks (`claude -v`, `claude plugin list --json`, `git --version`, `eas whoami`, `xcodebuild -version`…) failed or hung; since runner 1.4.2 each one has a 20 s limit and the rest are still published | `grep "tools check" ~/.backcode/logs/service.log \| tail -n 20` names the failing check and why. Run that same command by hand to see what it does (e.g. `claude plugin list --json` waiting on a sign-in or a broken marketplace, a CLI asking for input). Fix that tool, then the app updates within 10 minutes (or after **Update** / restarting the runner) |
 | «No CI» badge in the app, PRs merged with no checks | The repo's main branch has no CI | See [CI](#ci): offer to create it in its own PR |
 
 When it's fixed, run `backcode status` again and tell the user what was wrong and what you changed, in one or two lines,
