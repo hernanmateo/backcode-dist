@@ -18,7 +18,12 @@ If there's none, or `backcode task start` says the repo isn't connected, explain
 `/backcode:setup`. Don't fall back to committing on the main branch.
 
 If you are **already in a worktree on a `backcode/…` branch** (`git branch --show-current`), this is the continuation of
-that work: skip to step 2 and keep everything there.
+that work: run `backcode task resume --json` there first, then skip to step 2 and keep everything there. That's also
+the case when the user hands you a task **the runner did** ("continue here on my computer a Backcode task…", a failed
+or waiting task, its branch and worktree): work on that branch, never start a new task or open another PR. `task resume`
+puts the task back to **In progress** under the user's name and stops the runner from picking it up again; it's
+harmless to repeat. If it refuses because a runner is still running or has it queued, tell the user to stop it from
+the app first.
 
 ## 1. Start: worktree and branch
 
@@ -57,13 +62,16 @@ that work: skip to step 2 and keep everything there.
    itself: Merged when the PR is merged, Deployed when an OTA (from the app or the terminal) includes it, with push
    notifications to the team. If the project has auto mode on, `task pr` says so and the user's runner merges it on its
    own once CI is green: tell the user, and don't merge it yourself.
+   Also for a task the runner did: it reuses the branch's PR if one is open and moves the task to "PR ready". Never
+   open the PR with `gh pr create` or by hand: then Backcode doesn't know about it and it doesn't show up in the app.
 3. If it fails, read the message, fix the cause (commit pending changes, remove a secret…) and run it again.
 4. Tell the user the PR link and that it's on the Backcode board, where it's reviewed, merged and deployed.
 
 ## Later changes
 
-To change the same PR (review comments, a follow-up): go back to that worktree, commit, and run `backcode task pr` again
-with the same or a better title. It updates the same PR and task. A different topic is a new `backcode task start`.
+To change the same PR (review comments, a follow-up): go back to that worktree, run `backcode task resume`, commit, and
+run `backcode task pr` again with the same or a better title. It updates the same PR and task. A different topic is a
+new `backcode task start`.
 
 ## Rules
 
