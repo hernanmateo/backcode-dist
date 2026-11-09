@@ -32,6 +32,12 @@ the app first.
    board). It fetches the remote, creates a worktree from `<remote>/<base>` on a branch `backcode/<handle>/<id>`, copies
    the local `.env` files, puts the task on the Backcode board already **In progress** (marked as made in Claude Code),
    and prints `{ "path", "branch", "base", "featureId" }`.
+   If the project has a **preview branch** (e.g. `dev`), the task starts from it and its PR targets it, like the
+   runner's tasks. **Hotfix:** when the user asks to fix something that is already **in production** (a crash or bug in
+   the live app, web or backend that can't wait for the next release), add `--hotfix`: the task starts from the main
+   branch and its PR targets it, and the output includes `"hotfix": true`. Say so to the user, and tell them that auto
+   mode doesn't merge hotfixes and that after merging and deploying it they should use **Sync** (Publish) to bring the
+   fix into the preview branch. Without a preview branch every task already starts from the main branch: no `--hotfix`.
 3. Work **only inside that `path`** from now on: `cd` into it for every command, and read/edit files with that absolute
    path. The original checkout stays as it was. If the project needs its dependencies installed, install them there.
 
