@@ -63,7 +63,8 @@ the app first.
    `backcode:deploy:<name>` script in that part's `package.json`; in a repo without JavaScript, a `[deploy.<name>]`
    entry with `run = "…"` in a `backcode.toml`. So the team can deploy it from the app. Deploys run in a clean copy of
    the commit: if one needs git-ignored local state (a download cache, a previous step's output), list those paths in
-   the entry's `shared = ["…"]` so the runner links them from the user's checkout instead of starting from scratch.
+   the entry's `shared = ["…"]` so the runner links them from the user's checkout instead of starting from scratch
+   (they must exist in the checkout of the computer that deploys, or the deploy won't start: say so in the PR).
 2. From the worktree: `backcode task pr --title "<imperative title>" --body-file <file> --json`.
    It checks there are no uncommitted changes and no secrets, pushes the branch, opens (or updates) the PR and moves the
    task to "PR ready" on the Backcode board, under the user's name. It prints `{ "prUrl" }`. From there it moves by
