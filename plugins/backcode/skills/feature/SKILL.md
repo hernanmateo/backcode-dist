@@ -64,7 +64,7 @@ the app first.
    Backcode already detects Cloudflare Workers (wrangler config and D1 migrations), Supabase (migrations and edge
    functions) and Firebase (rules and functions). If the change needs any other deployment and the repo has no
    deploy for it, add one in this PR, calling the project's existing deploy command (lowercase name with dashes; a
-   database migration ending in `-db` / `kind = "migration"`; no secrets): in a JavaScript repo, a
+   database migration ending in `-db` / `kind = "migration"`; a deploy that publishes an Expo OTA with `kind = "ota"` and `channel = "preview"` or `"production"`; no secrets): in a JavaScript repo, a
    `backcode:deploy:<name>` script in that part's `package.json`; in a repo without JavaScript, a `[deploy.<name>]`
    entry with `run = "…"` in a `backcode.toml`. So the team can deploy it from the app. Deploys run in a clean copy of
    the commit: if one needs git-ignored local state (a download cache, a previous step's output), list those paths in

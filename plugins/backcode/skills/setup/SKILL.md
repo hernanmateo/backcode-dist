@@ -138,7 +138,9 @@ ones they pick, **in a PR, the Backcode way**:
 2. In that worktree, for each one: in a JavaScript part, a `backcode:deploy:<name>` script in that folder's `package.json`
    calling the existing command (e.g. `"backcode:deploy:web": "npm run deploy"`, keeping the original script); without
    JavaScript, a `[deploy.<name>]` entry with `run = "…"` (and `dir` if needed) in a `backcode.toml`. Lowercase names with
-   dashes; database migrations end in `-db` (`kind = "migration"` in `backcode.toml`) so they go first. Never secrets in the
+   dashes; database migrations end in `-db` (`kind = "migration"` in `backcode.toml`) so they go first; a deploy that
+   publishes an Expo app's OTA takes `kind = "ota"` and `channel = "preview"` or `"production"` (it replaces that app's
+   native OTA). Never secrets in the
    command: they come from the `.env` files on the computer that deploys.
 3. Commit and run `backcode task pr --title "<same title>" --body-file <file>`, listing each deploy, its command and any
    login it needs (e.g. `! npx vercel login`).
