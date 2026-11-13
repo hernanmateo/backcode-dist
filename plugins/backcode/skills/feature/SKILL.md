@@ -41,6 +41,23 @@ the app first.
 3. Work **only inside that `path`** from now on: `cd` into it for every command, and read/edit files with that absolute
    path. The original checkout stays as it was. If the project needs its dependencies installed, install them there.
 
+## Big jobs: several tasks or subagents
+
+A big request can become several tasks (one topic each), and you can hand pieces to subagents. Each `task start` puts a
+task on the board **In progress** right away, and nothing else ever runs it: it only leaves that state with its own
+`backcode task pr`. So:
+
+- Run `task start` for a piece only when that piece is about to be worked on, not for the whole plan up front.
+- A subagent that does a piece works **only in that task's `path`**: give it the absolute `path` (and `branch`), tell it
+  to `cd` there for every command, edit files there, commit there and finish with `backcode task pr` from there (or
+  return to you so you run it). Don't use the Agent tool's own worktree isolation for Backcode pieces, and never let a
+  subagent edit the original checkout or the main branch: its commits wouldn't be on the task's branch.
+- Before you finish, check every task you started: each one ends with `backcode task pr` or, if it ended up with no work
+  (merged into another piece, not needed after all), with `backcode task cancel <featureId>` from the repo (or
+  `backcode task cancel` from its worktree). Cancel only works with no commits, no uncommitted changes and no PR: it
+  removes the task from the board and deletes its worktree and branch. Never leave a task **In progress** with nothing
+  in it, and never tell the user to clean it up by hand.
+
 ## 2. Do the work
 
 - Focused, minimal changes that follow the repo's conventions (its CLAUDE.md and existing code). No unrelated refactors.
@@ -96,4 +113,5 @@ new `backcode task start`.
   then closes any PR stacked on it. If a change depends on another unmerged PR, put both in the same PR or wait until the
   first is merged and start the second from the updated main branch.
 - Don't read `~/.backcode/config/` (it holds keys and tokens); `backcode` does everything that needs them.
-- Don't delete the worktree when you finish: the user may need it for changes. The runner cleans old ones up.
+- Don't delete the worktree when you finish: the user may need it for changes. The runner cleans old ones up. (A task
+  that ended up empty is the exception: `backcode task cancel` removes it and its worktree.)
