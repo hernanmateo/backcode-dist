@@ -1,8 +1,8 @@
 {
   "$schema": "https://anthropic.com/claude-code/plugin.schema.json",
   "name": "backcode",
-  "version": "1.1.21",
-  "description": "Backcode from Claude Code: set up and troubleshoot the runner, work the Backcode way outside Backcode (one worktree and PR per feature or fix, registered on the board), and create project notes (one or a batch).",
+  "version": "1.1.22",
+  "description": "Backcode from Claude Code: set up and troubleshoot the runner, work the Backcode way outside Backcode (one worktree and PR per feature or fix, registered on the board), and create project notes (one or a batch), and optionally set up CPU, memory and disk metrics with alerts for self-hosted servers.",
   "author": {
     "name": "Brothapps S.L.",
     "url": "https://github.com/hernanmateo"
@@ -16,12 +16,14 @@
     "setup",
     "worktree",
     "pull-requests",
-    "notes"
+    "notes",
+    "server-metrics"
   ],
   "skills": [
     "./skills/setup",
     "./skills/doctor",
     "./skills/feature",
-    "./skills/note"
+    "./skills/note",
+    "./skills/server-metrics"
   ]
 }
