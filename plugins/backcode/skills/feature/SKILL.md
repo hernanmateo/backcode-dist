@@ -67,8 +67,10 @@ task on the board **In progress** right away, and nothing else ever runs it: it 
 - **Research** (an audit, an investigation, a long-term plan the user asks you to write up): a Markdown document in the
   project's research folder, `docs/research/` unless `backcode.toml` sets another one in `[research] dir`. One file per
   topic (`YYYY-MM-DD-<slug>.md`) with a short frontmatter (`title`, `status: in-progress` or `done`, `commit` of the base
-  you read), in its own task and PR with no code changes. Write it as you go, not only at the end. Once merged, the team
-  reads it in the Backcode app (Notes › Research) and can turn it into tasks.
+  you read), in its own task and PR with no code changes: start that task with `backcode task start "<title>" --research
+  --json`, so it's tagged as research on the board (`task pr` also tags it when the branch only changes `.md` files in that
+  folder). Write it as you go, not only at the end. Once merged, the team reads it in the Backcode app (Notes › Research)
+  and can turn it into tasks.
 - Commit in the worktree with clear messages (`git add -A && git commit -m "…"` inside `path`). Committing there is fine:
   it's the task branch, not the main branch.
 
