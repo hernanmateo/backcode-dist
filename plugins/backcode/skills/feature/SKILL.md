@@ -62,7 +62,14 @@ task on the board **In progress** right away, and nothing else ever runs it: it 
 
 - Focused, minimal changes that follow the repo's conventions (its CLAUDE.md and existing code). No unrelated refactors.
 - Run the project's tests, linter and type checker for what you touched, and fix what broke. Add tests when the repo
-  has a test suite.
+  has a test suite. If the repo declares checks (`[check.<name>]` entries with `run = "…"` in `backcode.toml`, or
+  `backcode:check:*` scripts in a `package.json`), those are the commands Backcode runs before merging: use them, because
+  they include what the tests need first (e.g. building the monorepo's workspace packages). A test that fails because of
+  the environment (a workspace package or generated file not built yet, missing dependencies) is not "unrelated to the
+  change": build or install what the check commands do and run it again. Say in the PR which checks passed.
+- If a project's tests only run after a step that isn't written down anywhere (and there are no checks), propose adding a
+  `[check.<name>]` to `backcode.toml` or a line to its CLAUDE.md with that step, so the runner's tasks and others don't
+  trip over it. Ask before doing it.
 - Never commit secrets, credentials or `.env` files.
 - **Research** (an audit, an investigation, a long-term plan the user asks you to write up): a Markdown document in the
   project's research folder, `docs/research/` unless `backcode.toml` sets another one in `[research] dir`. One file per
