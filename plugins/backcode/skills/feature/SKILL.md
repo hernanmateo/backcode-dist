@@ -11,6 +11,9 @@ reviewed, merged and deployed. The runner (`backcode`) does the git plumbing; yo
 
 Talk to the user in their language. Be brief.
 
+This skill is for doing the work **now, in this session**. If the user wants a task left on the board for a runner to do
+later (a Sleepy task, a research to run overnight, "créame una tarea de…"), use `/backcode:task` instead.
+
 ## 0. Is this repo connected?
 
 Find the runner: `command -v backcode || ls ~/.backcode/bin/backcode` (use whichever exists as `backcode` below).
