@@ -31,8 +31,26 @@ characters (32,000 for research). Optionally, acceptance criteria in another fil
 ## 2. Create it
 
 ```
-backcode task create "<short title>" --prompt-file <file> [--criteria-file <file>] [options] --json
+backcode task create "<short title>" --prompt-file <file> [--criteria-file <file>] \
+  --suggested-model <model> --suggested-effort <effort> --model-reason "<one sentence>" [options] --json
 ```
+
+**Always** recommend a model and an effort, like Backcode's own task refiner does (it shows in the app as "AI recommends
+…", and it's what runs the task when the user's profile is set to "Recommended"):
+
+- `--suggested-model`: the cheapest Claude model that will do the task well, by complexity: `haiku` for trivial,
+  mechanical changes (copy, a style tweak, a config value in one file); `sonnet` for most features or fixes touching a
+  few files, with tests; `opus` for hard or broad work (architecture changes, tricky bugs, many modules,
+  security-sensitive logic, migrations); `fable` only for the hardest, longest tasks (large refactors or new subsystems
+  across the codebase). When unsure between two, pick the cheaper one.
+- `--suggested-effort`: the reasoning effort, by how hard the task is to get right (not how big it is): `low` for
+  trivial, mechanical changes; `medium` for contained, well-specified changes; `high` for most features and fixes that
+  need care (the usual choice); `xhigh` for tricky logic, subtle bugs, concurrency, security-sensitive or long multi-step
+  work; `max` only when correctness matters far more than time and cost. When unsure between two, pick the lower one.
+- `--model-reason`: one short sentence, in the user's language, explaining the choice.
+
+This is a recommendation, not the user's choice: don't turn it into `--model`/`--effort`. Opus or Fable recommended
+also makes the task plan first (unless `--no-plan-first`).
 
 Options, only what the user asked for (or clearly implied):
 
@@ -41,8 +59,9 @@ Options, only what the user asked for (or clearly implied):
   ("audit the whole code", "migrate everything to X").
 - `--research`: the result is a Markdown document in the project's research folder (an audit, an investigation, a
   plan), not code changes. Combines with `--sleepy`.
-- `--model haiku|sonnet|opus|fable` and `--effort low|medium|high|xhigh|max`: when the user names them. Without them, the
-  user's profile preferences in Backcode decide.
+- `--model haiku|sonnet|opus|fable` and `--effort low|medium|high|xhigh|max`: only when the user names them; they win
+  over everything. Without them, the user's profile in Backcode decides: "Recommended" uses your recommendation, a fixed
+  model uses that one, "Default" uses the default of the Claude Code that runs it.
 - `--plan-first` / `--no-plan-first`: Claude proposes a plan and waits for the user's approval in the app before
   touching code. Opus and Fable tasks plan first by default.
 - `--unassigned`: leave it unassigned in the backlog so the project's **auto-assign** hands it out (a Sleepy one goes to
